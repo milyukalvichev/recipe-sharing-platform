@@ -2,7 +2,9 @@ package com.exam.recipeplatform.web;
 
 import com.exam.recipeplatform.model.dto.RecipeCreateBindingModel;
 import com.exam.recipeplatform.model.entity.Recipe;
+import com.exam.recipeplatform.model.entity.Review;
 import com.exam.recipeplatform.service.RecipeService;
+import com.exam.recipeplatform.service.ReviewService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
@@ -22,7 +24,21 @@ public class RecipeController {
         this.recipeService = recipeService;
     }
 
-    // CREATE (View Form)
+    @GetMapping
+    public String feedPage(Model model) {
+        model.addAttribute("allRecipes", recipeService.getAllPublicRecipes());
+        return "feed";
+    }
+
+    @GetMapping("/cookbook")
+    public String personalCookbook(Model model, HttpSession session) {
+        UUID userId = (UUID) session.getAttribute("user_id");
+        model.addAttribute("myRecipes", recipeService.getAllPublicRecipes().stream()
+                .filter(r -> r.getCreator().getId().equals(userId))
+                .toList());
+        return "cookbook";
+    }
+
     @GetMapping("/create")
     public String createForm(Model model) {
         if (!model.containsAttribute("recipeModel")) {
@@ -31,12 +47,11 @@ public class RecipeController {
         return "recipe-form";
     }
 
-    // CREATE (Post Handler with Server-Side Validation)
     @PostMapping("/create")
     public String handleCreate(@Valid @ModelAttribute("recipeModel") RecipeCreateBindingModel recipeModel,
                                BindingResult bindingResult, HttpSession session) {
         if (bindingResult.hasErrors()) {
-            return "recipe-form"; // Redisplay form to show red validation labels
+            return "recipe-form";
         }
 
         UUID userId = (UUID) session.getAttribute("user_id");
@@ -49,14 +64,14 @@ public class RecipeController {
         return "redirect:/recipes";
     }
 
-    // READ (Feed Dashboard)
-    @GetMapping
-    public String feedPage(Model model) {
-        model.addAttribute("allRecipes", recipeService.getAllPublicRecipes());
-        return "feed";
+    @GetMapping("/{id}")
+    public String recipeDetails(@PathVariable UUID id, Model model) {
+        model.addAttribute("recipe", recipeService.getRecipeById(id));
+        return "details";
     }
 
-    // UPDATE (View Form)
+
+
     @GetMapping("/edit/{id}")
     public String editForm(@PathVariable UUID id, Model model) {
         Recipe recipe = recipeService.getRecipeById(id);
@@ -70,7 +85,6 @@ public class RecipeController {
         return "recipe-form";
     }
 
-    // UPDATE (Put Handler)
     @PostMapping("/edit/{id}")
     public String handleUpdate(@PathVariable UUID id, @Valid @ModelAttribute("recipeModel") RecipeCreateBindingModel recipeModel,
                                BindingResult bindingResult, HttpSession session) {
@@ -88,21 +102,10 @@ public class RecipeController {
         return "redirect:/recipes";
     }
 
-    // DELETE Handler
     @PostMapping("/delete/{id}")
     public String handleDelete(@PathVariable UUID id, HttpSession session) {
         UUID userId = (UUID) session.getAttribute("user_id");
         recipeService.deleteRecipe(id, userId);
         return "redirect:/recipes";
-    }
-
-    @GetMapping("/cookbook")
-    public String personalCookbook(Model model, HttpSession session) {
-        UUID userId = (UUID) session.getAttribute("user_id");
-        // Тук филтрираме рецептите, където създателят съвпада с логнатия потребител
-        model.addAttribute("myRecipes", recipeService.getAllPublicRecipes().stream()
-                .filter(r -> r.getCreator().getId().equals(userId))
-                .toList());
-        return "cookbook";
     }
 }

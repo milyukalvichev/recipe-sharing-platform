@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Navigation</title>
+</head>
+<body>
+
+<nav th:fragment="navbar">
+    <div class="nav-container">
+        <a class="nav-brand" href="/">🍳 RecipeSphere</a>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a th:if="${session.user_id == null}" href="/login">Login</a>
+            <a th:if="${session.user_id == null}" href="/register">Register</a>
+
+            <a th:if="${session.user_id != null}" href="/recipes">All Recipes</a>
+            <a th:if="${session.user_id != null}" href="/recipes/create">Share Recipe</a>
+            <a th:if="${session.user_id != null}" href="/logout">Logout</a>
+        </div>
+    </div>
+</nav>
+
+</body>
+</html>

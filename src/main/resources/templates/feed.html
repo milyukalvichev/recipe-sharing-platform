@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Recipe Dashboard</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main>
+    <h2>Explore Recipes</h2>
+
+    <div th:if="${allRecipes.isEmpty()}">
+        <p>No recipes shared yet. Be the first to create one!</p>
+    </div>
+
+    <div class="recipe-card" th:each="recipe : ${allRecipes}">
+        <h3 th:text="${recipe.title}">Recipe Title</h3>
+        <p><strong>Prep Time:</strong> <span th:text="${recipe.preparationTime}">0</span> mins</p>
+        <p th:text="${#strings.abbreviate(recipe.instructions, 150)}">Instructions snippet...</p>
+
+        <div class="action-links">
+            <a th:href="@{|/recipes/${recipe.id}|}">View Details</a>
+
+            <a th:if="${session.user_id == recipe.creator.id}"
+               th:href="@{|/recipes/edit/${recipe.id}|}">Edit</a>
+
+            <form th:if="${session.user_id == recipe.creator.id}"
+                  th:action="@{|/recipes/delete/${recipe.id}|}" method="POST">
+                <button type="submit">Delete</button>
+            </form>
+        </div>
+    </div>
+</main>
+</body>
+</html>

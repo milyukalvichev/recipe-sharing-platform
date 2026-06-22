@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Error - RecipeSphere</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main style="text-align: center; margin-top: 60px;">
+    <h1 style="color: var(--danger-color);">Oops! Something went wrong</h1>
+    <div class="recipe-card" style="max-width: 500px; margin: 20px auto; text-align: left;">
+        <p style="font-weight: 600;" th:text="${errorMessage}">Error details here...</p>
+    </div>
+    <a href="/" class="back-link" style="color: var(--primary-color); font-weight: 600;">Return to Safety</a>
+</main>
+</body>
+</html>

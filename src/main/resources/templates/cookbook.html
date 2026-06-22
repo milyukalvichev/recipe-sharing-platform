@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Cookbook</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main>
+    <h2>My Personal Cookbook 📖</h2>
+    <p>Manage your custom culinary creations here.</p>
+
+    <div th:if="${myRecipes == null || myRecipes.isEmpty()}">
+        <p>You haven't added any recipes to your collection yet.</p>
+        <a href="/recipes/create" class="back-link">Click here to write your first recipe!</a>
+    </div>
+
+    <div class="recipe-card" th:each="recipe : ${myRecipes}">
+        <h3 th:text="${recipe.title}">Recipe Title</h3>
+        <p><strong>Prep Time:</strong> <span th:text="${recipe.preparationTime}">0</span> mins</p>
+
+        <div class="action-links">
+            <a th:href="@{|/recipes/edit/${recipe.id}|}">Edit Details</a>
+            <form th:action="@{|/recipes/delete/${recipe.id}|}" method="POST">
+                <button type="submit">Remove From Cookbook</button>
+            </form>
+        </div>
+    </div>
+</main>
+</body>
+</html>

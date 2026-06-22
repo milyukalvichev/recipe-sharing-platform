@@ -95,4 +95,14 @@ public class RecipeController {
         recipeService.deleteRecipe(id, userId);
         return "redirect:/recipes";
     }
+
+    @GetMapping("/cookbook")
+    public String personalCookbook(Model model, HttpSession session) {
+        UUID userId = (UUID) session.getAttribute("user_id");
+        // Тук филтрираме рецептите, където създателят съвпада с логнатия потребител
+        model.addAttribute("myRecipes", recipeService.getAllPublicRecipes().stream()
+                .filter(r -> r.getCreator().getId().equals(userId))
+                .toList());
+        return "cookbook";
+    }
 }

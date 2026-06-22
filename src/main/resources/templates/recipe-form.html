@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Recipe</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="form-wrapper">
+    <h2 th:text="${recipeId != null} ? 'Edit Recipe' : 'Share a New Recipe'">Manage Recipe</h2>
+
+    <form th:action="@{${recipeId != null ? '/recipes/edit/' + recipeId : '/recipes/create'}}"
+          th:object="${recipeModel}" method="POST">
+
+        <div class="form-group">
+            <label for="title">Recipe Title</label>
+            <input type="text" id="title" th:field="*{title}" placeholder="e.g., Grandma's Apple Pie"/>
+            <p class="error-msg" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></p>
+        </div>
+
+        <div class="form-group">
+            <label for="preparationTime">Preparation Time (minutes)</label>
+            <input type="number" id="preparationTime" th:field="*{preparationTime}"/>
+            <p class="error-msg" th:if="${#fields.hasErrors('preparationTime')}" th:errors="*{preparationTime}"></p>
+        </div>
+
+        <div class="form-group">
+            <label for="instructions">Cooking Steps & Instructions</label>
+            <textarea id="instructions" th:field="*{instructions}" rows="6" placeholder="Describe steps..."></textarea>
+            <p class="error-msg" th:if="${#fields.hasErrors('instructions')}" th:errors="*{instructions}"></p>
+        </div>
+
+        <button type="submit" class="btn-primary">Save Recipe</button>
+    </form>
+</main>
+</body>
+</html>

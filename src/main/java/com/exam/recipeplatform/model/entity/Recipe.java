@@ -1,6 +1,8 @@
 package com.exam.recipeplatform.model.entity;
 
 import jakarta.persistence.*;
+
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -21,6 +23,13 @@ public class Recipe {
 
     @ManyToOne
     private User creator;
+
+
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Ingredient> ingredients;
+
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Review> reviews;
 
     public Recipe() {}
     public UUID getId() { return id; }
